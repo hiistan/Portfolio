@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin</title><meta name="robots" content="noindex">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}[hidden]{display:none!important}
+body{font-family:-apple-system,system-ui,sans-serif;background:#f5f5f7;color:#1d1d1f;padding:20px;display:grid;justify-items:center}
+.box{width:100%;max-width:580px;background:#fff;border:1px solid #d9d9de;border-radius:16px;padding:22px;margin-bottom:16px;display:flex;flex-direction:column;gap:12px}
+h1{font-size:20px}h2{font-size:15px}form{display:flex;flex-direction:column;gap:12px}
+label{font-size:12px;font-weight:600;color:#6e6e73;display:flex;flex-direction:column;gap:5px}
+input,textarea,select{font:inherit;font-size:14px;padding:10px 12px;border:1px solid #d9d9de;border-radius:10px;background:#fff}
+button{font:inherit;font-weight:600;font-size:14px;padding:10px 16px;border:0;border-radius:10px;background:#0a84ff;color:#fff;cursor:pointer}
+button:disabled{opacity:.5}button.g{background:#e8e8ec;color:#1d1d1f}button.d{background:#ff453a}button.s{padding:6px 12px;font-size:12px}
+.msg{font-size:13px;color:#ff453a;min-height:16px}.ok{color:#248a3d}
+.row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #eee}
+.row img,.row .ph{width:64px;height:40px;border-radius:8px;object-fit:cover;background:#dbeafe;flex:none;display:grid;place-items:center;font-size:10px;font-weight:700;color:#2a82dc}
+.row div{flex:1;min-width:0;font-size:13px}.row small{display:block;color:#6e6e73;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hint{font-weight:400;font-size:11px}
+</style></head><body>
+<div class="box" id="login" style="max-width:580px"><h1>Admin login</h1>
+<form id="lf"><label>Email<input id="em" type="email" required></label><label>Password<input id="pw" type="password" required></label><button>Sign in</button></form>
+<div class="msg" id="lm"></div></div>
+
+<div id="app" hidden style="width:100%;max-width:580px">
+<div class="box"><div style="display:flex;justify-content:space-between;align-items:center"><h1 id="ft">Add an item</h1><button class="g s" id="out">Sign out</button></div>
+<form id="af">
+<label>Folder<select id="ct"><option value="web">Web Designs</option><option value="credentials">Credentials (file)</option><option value="data">Data Analysis</option><option value="blogs">Blogs</option></select></label>
+<label>Name<input id="nm" required placeholder="Zeiva Studios / My CV / Article title"></label>
+<label id="wl">Link<input id="lk" placeholder="https://yoursite.vercel.app"></label>
+<label id="fl" hidden>File to upload <span class="hint">(PDF, image, doc… visitors can view and download it)</span><input id="fi" type="file"></label>
+<label>Short description<textarea id="pu" rows="2" maxlength="140" placeholder="What is it for?"></textarea></label>
+<label>Picture / screenshot <span class="hint">(optional for credentials)</span><input id="im" type="file" accept="image/*"></label>
+<div style="display:flex;gap:8px"><button id="sv">Add item</button><button type="button" class="g" id="cn" hidden>Cancel edit</button></div></form>
+<div class="msg" id="am"></div></div>
+<div class="box"><h2>Everything you have added</h2><div id="ls"></div></div></div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+var sb=supabase.createClient(CFG.url,CFG.key),B='portfolio',editing=null,rows=[],$=function(i){return document.getElementById(i)};
+var NAMES={web:'Web',credentials:'Credentials',data:'Data',blogs:'Blogs'};
+function say(t,ok){$('am').textContent=t;$('am').className='msg'+(ok?' ok':'')}
+function sync(){var c=$('ct').value==='credentials';$('wl').hidden=c;$('fl').hidden=!c}
+$('ct').onchange=sync;
+function gate(){sb.auth.getSession().then(function(r){var on=!!r.data.session;$('login').hidden=on;$('app').hidden=!on;if(on)list()})}
+$('lf').onsubmit=function(e){e.preventDefault();sb.auth.signInWithPassword({email:$('em').value,password:$('pw').value}).then(function(r){r.error?$('lm').textContent=r.error.message:gate()})};
+$('out').onclick=function(){sb.auth.signOut().then(gate)};
+function up(f){var p=Date.now()+'-'+f.name.replace(/[^a-z0-9.]/gi,'_');
+ return sb.storage.from(B).upload(p,f).then(function(r){if(r.error)throw r.error;return sb.storage.from(B).getPublicUrl(p).data.publicUrl})}
+function reset(){editing=null;$('af').reset();$('ft').textContent='Add an item';$('sv').textContent='Add item';$('cn').hidden=true;sync()}
+$('cn').onclick=function(){reset();say('')};
+$('af').onsubmit=async function(e){e.preventDefault();$('sv').disabled=true;say('Saving...',1);
+ try{
+  var cat=$('ct').value,row={name:$('nm').value.trim(),purpose:$('pu').value.trim()||null,category:cat};
+  if(cat==='credentials'){var f=$('fi').files[0];
+   if(f){row.file_url=await up(f);row.file_name=f.name}else if(!editing)throw new Error('Please choose a file to upload.');row.link=null}
+  else{var lk=$('lk').value.trim();if(!lk)throw new Error('Please enter the link.');if(!/^https?:\/\//i.test(lk))lk='https://'+lk;row.link=lk}
+  var im=$('im').files[0];if(im)row.image_url=await up(im);
+  var r=editing?await sb.from('sites').update(row).eq('id',editing):await sb.from('sites').insert(row);
+  if(r.error)throw r.error;
+  reset();say(editing===null?'Saved. It is live now.':'Saved.',1);list()
+ }catch(err){say(err.message||String(err))}
+ $('sv').disabled=false};
+function edit(s){editing=s.id;$('ct').value=s.category||'web';$('nm').value=s.name;$('lk').value=s.link||'';$('pu').value=s.purpose||'';
+ $('ft').textContent='Edit item';$('sv').textContent='Save changes';$('cn').hidden=false;sync();say('Leave file/picture empty to keep the current ones.',1);scrollTo(0,0)}
+function list(){sb.from('sites').select('*').order('created_at',{ascending:false}).then(function(r){var b=$('ls');b.innerHTML='';rows=r.data||[];
+ rows.forEach(function(s){var d=document.createElement('div');d.className='row';
+  var i=document.createElement(s.image_url?'img':'span');if(s.image_url)i.src=s.image_url;else{i.className='ph';i.textContent=s.file_name?'FILE':''}
+  var m=document.createElement('div'),n=document.createElement('b'),l=document.createElement('small');
+  n.textContent=s.name;l.textContent=(NAMES[s.category]||'Web')+' · '+(s.link||s.file_name||'');m.append(n,l);
+  var ed=document.createElement('button');ed.className='g s';ed.textContent='Edit';ed.onclick=function(){edit(s)};
+  var x=document.createElement('button');x.className='d s';x.textContent='Delete';
+  x.onclick=function(){if(confirm('Delete '+s.name+'?'))sb.from('sites').delete().eq('id',s.id).then(list)};
+  d.append(i,m,ed,x);b.append(d)})})}
+sync();gate();
+</script></body></html>
