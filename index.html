@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>374N</title>
+<title>Festus Obalolu Joshua</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#fff;--tx:#1d1d1f;--mu:#6e6e73;--win:#fff;--side:#e8e8ec;--bar:#f2f2f4;--line:#d9d9de;--sel:#cfe3fb;--selt:#0a64c8;--hov:#dcdce2;--scrim:rgba(255,255,255,.7);--shadow:rgba(30,100,180,.3);--tg:#f2f2f4}
@@ -147,9 +147,9 @@ a.th{display:block}
   <div class="front">
     <div class="info">
       <h1>Festus Obalolu Joshua</h1>
-      <h2>Product Designer &amp; Design Engineer</h2>
-      <p>Crafting thoughtful user experiences and coding the interactive systems behind them.</p>
-      <div class="chips"><span>3+ years</span><span>CY/Remote</span><span>Available</span></div>
+      <h2>Staff Product Designer &amp; Design Engineer</h2>
+      <p>Crafting scalable design systems, fintech platforms and interactive interfaces for tech leaders.</p>
+      <div class="chips"><span>8+ yrs</span><span>SF / Remote</span><span>Available</span></div>
     </div>
   </div>
 </a>
@@ -164,7 +164,7 @@ a.th{display:block}
 
     <div class="bar"><a href="#" title="Close"></a>
       <span>
-        <span class="t t1"><b>Web Designs</b><small><em class="cnt" data-c="web">0</em> items ·</small></span>
+        <span class="t t1"><b>Web Designs</b><small><em class="cnt" data-c="web">0</em> items · Updated live</small></span>
         <span class="t t2"><b>Credentials</b><small><em class="cnt" data-c="credentials">0</em> items · Verified documents</small></span>
         <span class="t t3"><b>Data Analysis</b><small><em class="cnt" data-c="data">0</em> items · Work in progress</small></span>
         <span class="t t4"><b>Blogs</b><small><em class="cnt" data-c="blogs">0</em> items · Articles &amp; essays</small></span>
@@ -184,10 +184,10 @@ a.th{display:block}
         </div>
 
         <div class="me">
-          <div class="av">374N</div>
+          <div class="av">FJ</div>
           <h3>Festus Obalolu Joshua</h3>
-          <h4>Product Designer &amp; Design Engineer</h4>
-          <p>Crafting thoughtful user experiences and coding the interactive systems behind them.</p>
+          <h4>Staff Product Designer &amp; Design Engineer</h4>
+          <p>Crafting scalable design systems, fintech platforms and interactive interfaces for tech leaders.</p>
           <div class="soc">
             <a href="https://www.linkedin.com/in/your-handle" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn"><svg><use href="#in"/></svg></a>
             <a href="mailto:jfestus94@gmail.com" title="Email" aria-label="Email"><svg><use href="#ml"/></svg></a>
@@ -209,13 +209,13 @@ a.th{display:block}
 
     <div class="status">
       <span>
-        <span class="s s1">374N  › Portfolio › Web Designs</span>
-        <span class="s s2">374N  › Portfolio › Credentials</span>
-        <span class="s s3">374N  › Portfolio › Data Analysis</span>
-        <span class="s s4">374N  › Portfolio › Blogs</span>
+        <span class="s s1">Macintosh HD › Portfolio › Web Designs</span>
+        <span class="s s2">Macintosh HD › Portfolio › Credentials</span>
+        <span class="s s3">Macintosh HD › Portfolio › Data Analysis</span>
+        <span class="s s4">Macintosh HD › Portfolio › Blogs</span>
       </span>
       <span>
-        <span class="s s1"><em class="cnt" data-c="web">0</em> items · Click to open live site</span>
+        <span class="s s1"><em class="cnt" data-c="web">0</em> items · Click to read the case study</span>
         <span class="s s2"><em class="cnt" data-c="credentials">0</em> items · View or download</span>
         <span class="s s3"><em class="cnt" data-c="data">0</em> items · Click to open</span>
         <span class="s s4"><em class="cnt" data-c="blogs">0</em> items · Click to read</span>
@@ -230,7 +230,7 @@ a.th{display:block}
 (function(){
   var cfg=window.CFG||{};
   var cats={
-    web:{id:'sites',pill:'Open site \u2197',none:'No websites yet.'},
+    web:{id:'sites',pill:'View case study \u2197',none:'No websites yet.'},
     credentials:{id:'creds',pill:'Open \u2197',none:'No documents yet.'},
     data:{id:'data',pill:'Open \u2197',none:'Work in Progress'},
     blogs:{id:'blogs',pill:'Read \u2197',none:'No articles yet.'}
@@ -255,7 +255,7 @@ a.th{display:block}
     if(!rows.length){box.appendChild(k==='data'?el('div','wip',c.none):el('div','note',c.none));return}
     rows.forEach(function(s){
       if(k==='credentials'){box.appendChild(docCard(s));return}
-      var a=el('a','item');a.href=/^https?:\/\//i.test(s.link)?s.link:'#';a.target='_blank';a.rel='noopener';
+      var a=el('a','item');if(k==='web'){a.href='case.html?id='+encodeURIComponent(s.id)}else{a.href=/^https?:\/\//i.test(s.link)?s.link:'#';a.target='_blank';a.rel='noopener'}
       var th=el('div','th');
       if(s.image_url){var im=new Image();im.loading='lazy';im.alt='';im.src=s.image_url;im.onerror=function(){im.remove()};th.appendChild(im)}
       th.appendChild(el('i','',c.pill));a.appendChild(th);a.appendChild(el('b','',s.name));
@@ -272,5 +272,6 @@ a.th{display:block}
   sb.channel('sites-live').on('postgres_changes',{event:'*',schema:'public',table:'sites'},load).subscribe();
 })();
 </script>
+<script>try{var t=document.getElementById('theme');if(localStorage.getItem('theme')==='dark')t.checked=true;t.onchange=function(){localStorage.setItem('theme',t.checked?'dark':'light')}}catch(e){}</script>
 </body>
 </html>

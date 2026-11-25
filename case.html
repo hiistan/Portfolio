@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Case study</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff;--tx:#1d1d1f;--mu:#6e6e73;--line:#e3e3e8;--sel:#cfe3fb;--selt:#0a64c8;--tg:#f2f2f4;--card:#f5f5f7}
+:root:has(#theme:checked){--bg:#0c0c10;--tx:#f5f5f7;--mu:#a1a1a6;--line:#2e2e33;--sel:#1d4f8f;--selt:#cfe5ff;--tg:#2b2b2e;--card:#17171b}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;line-height:1.55;transition:background .3s,color .3s}
+a{color:inherit;text-decoration:none}
+#theme{position:absolute;opacity:0;pointer-events:none}
+.toggle{position:fixed;top:14px;right:14px;z-index:10;width:40px;height:40px;border-radius:50%;background:var(--tg);border:1px solid var(--line);cursor:pointer;display:grid;place-items:center;font-size:20px;color:var(--tx);box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.toggle::before{content:"☾"}
+:root:has(#theme:checked) .toggle::before{content:"☀\FE0E"}
+main{max-width:900px;margin:0 auto;padding:70px 20px 80px}
+.back{display:inline-block;font-size:13px;font-weight:600;color:var(--selt);margin-bottom:24px}
+.back:hover{text-decoration:underline}
+h1{font-size:clamp(30px,6vw,46px);letter-spacing:-.03em;line-height:1.1}
+.lead{font-size:clamp(15px,2.4vw,18px);color:var(--mu);margin-top:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.chips span{font-size:12px;font-weight:600;padding:5px 12px;border-radius:99px;background:var(--sel);color:var(--selt)}
+.btn{display:inline-block;margin-top:20px;padding:12px 24px;border-radius:99px;background:#2a82dc;color:#fff;font-weight:600;font-size:14px;transition:.2s}
+.btn:hover{background:#1f6fc2;transform:translateY(-2px)}
+.gal{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:30px}
+.gal a{display:block;border-radius:16px;overflow:hidden;background:var(--card);box-shadow:0 8px 30px rgba(0,0,0,.14);aspect-ratio:16/10}
+.gal a:first-child{grid-column:1/-1}
+.gal img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+.gal a:hover img{transform:scale(1.04)}
+h2{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#2a82dc;margin:46px 0 14px}
+.feat{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.f{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.f i{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--sel);color:var(--selt);font:700 12px system-ui;margin-bottom:10px}
+.f b{display:block;font-size:15px;margin-bottom:4px}
+.f p{font-size:14px;color:var(--mu)}
+.end{margin-top:46px;text-align:center}
+.note{color:var(--mu);padding:30px 0}
+@media(max-width:600px){.gal{grid-template-columns:1fr}}
+</style></head><body>
+<input type="checkbox" id="theme" aria-label="Dark mode"><label class="toggle" for="theme" title="Switch light / dark mode"></label>
+<main><a class="back" href="index.html#explorer">← Back to portfolio</a><div id="c"><p class="note">Loading…</p></div></main>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+try{var t=document.getElementById('theme');if(localStorage.getItem('theme')==='dark')t.checked=true;t.onchange=function(){localStorage.setItem('theme',t.checked?'dark':'light')}}catch(e){}
+(function(){
+  var c=document.getElementById('c'),id=new URLSearchParams(location.search).get('id'),cfg=window.CFG||{};
+  function el(t,k,x){var e=document.createElement(t);if(k)e.className=k;if(x)e.textContent=x;return e}
+  function msg(x){c.innerHTML='';c.appendChild(el('p','note',x))}
+  if(!id)return msg('No project selected.');
+  if(!window.supabase||!cfg.url||cfg.url.indexOf('YOUR-')>-1)return msg('Add your Supabase keys in config.js.');
+  supabase.createClient(cfg.url,cfg.key).from('sites').select('*').eq('id',id).maybeSingle().then(function(r){
+    var s=r.data;if(r.error||!s)return msg('Project not found.');
+    document.title=s.name+' — Case study';c.innerHTML='';
+    var live=/^https?:\/\//i.test(s.link||'')?s.link:null;
+    function btn(){var b=el('a','btn','Visit live site \u2197');b.href=live;b.target='_blank';b.rel='noopener';return b}
+    c.appendChild(el('h1','',s.name));
+    if(s.purpose)c.appendChild(el('p','lead',s.purpose));
+    var ch=el('div','chips');[s.role,s.year,s.tools].forEach(function(v){if(v)ch.appendChild(el('span','',v))});
+    if(ch.children.length)c.appendChild(ch);
+    if(live)c.appendChild(btn());
+    var pics=(s.gallery&&s.gallery.length)?s.gallery:(s.image_url?[s.image_url]:[]);
+    if(pics.length){var g=el('div','gal');pics.forEach(function(u){var a=el('a');a.href=u;a.target='_blank';a.rel='noopener';var im=new Image();im.loading='lazy';im.alt=s.name;im.src=u;im.onerror=function(){a.remove()};a.appendChild(im);g.appendChild(a)});c.appendChild(g)}
+    var f=s.features||[];
+    if(f.length){c.appendChild(el('h2','','Features'));var fg=el('div','feat');
+      f.forEach(function(x,i){var d=el('div','f');d.appendChild(el('i','',String(i+1)));d.appendChild(el('b','',x.t));if(x.d)d.appendChild(el('p','',x.d));fg.appendChild(d)});c.appendChild(fg)}
+    if(live){var e=el('div','end');e.appendChild(btn());c.appendChild(e)}
+  });
+})();
+</script></body></html>
