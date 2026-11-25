@@ -106,6 +106,37 @@ a.th{display:block}
 .acts{display:flex;gap:8px;margin-top:8px}
 .acts a{font-size:11px;font-weight:600;padding:5px 13px;border-radius:99px;background:var(--sel);color:var(--selt);transition:.2s}
 .acts a:hover{background:#2a82dc;color:#fff}
+/* view bar + view modes */
+.tool{display:flex;align-items:center;gap:10px;padding:7px 14px;background:var(--win);border-bottom:1px solid var(--line);font-size:12px;color:var(--mu)}
+.seg{display:flex;background:var(--side);border-radius:8px;padding:2px;gap:2px}
+.seg label{padding:4px 12px;border-radius:6px;cursor:pointer;font-weight:600;transition:.2s}
+.seg label:hover{background:var(--hov)}
+#v1:checked~.tool .m1,#v2:checked~.tool .m2,#v3:checked~.tool .m3,#v4:checked~.tool .m4{background:var(--win);color:var(--tx);box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.item small.d,.item small.k,.hd{display:none}
+/* medium icons */
+#v2:checked~.body .panel{grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:16px 12px}
+#v2:checked~.body .item p,#v2:checked~.body .th i,#v2:checked~.body .acts{display:none}
+#v2:checked~.body .item b{font-size:12px;margin-top:7px}
+/* list + details */
+#v3:checked~.body .panel,#v4:checked~.body .panel{grid-template-columns:1fr;gap:0}
+#v3:checked~.body .th,#v4:checked~.body .th{display:none}
+#v3:checked~.body .item,#v4:checked~.body .item{padding:9px 12px;border-radius:8px;align-items:center;gap:12px}
+#v3:checked~.body .item:hover,#v4:checked~.body .item:hover{background:var(--hov);transform:none}
+#v3:checked~.body .item b,#v4:checked~.body .item b{margin:0;font-size:13px}
+#v3:checked~.body .item p,#v4:checked~.body .item p{margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v3:checked~.body .acts,#v4:checked~.body .acts{margin:0}
+#v3:checked~.body .item{display:flex}
+#v3:checked~.body .item::before{content:"";width:8px;height:8px;border-radius:50%;background:#2a82dc;flex:none}
+#v3:checked~.body .item p{flex:1}
+#v4:checked~.body .item,#v4:checked~.body .hd{display:grid;grid-template-columns:minmax(120px,1.2fr) 2fr 60px 90px;gap:12px}
+#v4:checked~.body .item{border-bottom:1px solid var(--line);border-radius:0}
+#v4:checked~.body .item small.d,#v4:checked~.body .item small.k{display:block;margin:0;font-size:12px}
+#v4:checked~.body .acts{grid-column:1/-1}
+#v4:checked~.body .hd{padding:6px 12px;border-bottom:1px solid var(--line);font-size:11px;font-weight:600;color:var(--mu)}
+/* hover preview (list + details) */
+#pv{position:fixed;left:0;top:0;width:270px;aspect-ratio:16/10;border-radius:12px;overflow:hidden;background:var(--side);box-shadow:0 18px 44px rgba(0,0,0,.35);z-index:60;pointer-events:none;opacity:0;transition:opacity .15s}
+#pv.on{opacity:1}#pv img{width:100%;height:100%;object-fit:cover;display:block}
+@media(max-width:700px){#v4:checked~.body .item,#v4:checked~.body .hd{grid-template-columns:1fr 60px}#v4:checked~.body .item p,#v4:checked~.body .item small.k,#v4:checked~.body .hd span:nth-child(2),#v4:checked~.body .hd span:nth-child(4){display:none}}
 /* status + path bar */
 .status{display:flex;justify-content:space-between;gap:12px;padding:7px 14px;background:var(--bar);border-top:1px solid var(--line);font-size:11px;color:var(--mu)}
 .s{display:none}
@@ -139,6 +170,8 @@ a.th{display:block}
 <input type="checkbox" id="theme" aria-label="Dark mode">
 <label class="toggle" for="theme" title="Switch light / dark mode"></label>
 
+<div id="pv"><img alt=""></div>
+
 <a class="folder" href="#explorer" aria-label="Open Festus Obalolu Joshua's portfolio">
   <div class="back"></div>
   <div class="paper p1"><b>DesignSystem_Aurora</b>48 components</div>
@@ -147,7 +180,7 @@ a.th{display:block}
   <div class="front">
     <div class="info">
       <h1>Festus Obalolu Joshua</h1>
-      <h2>Staff Product Designer &amp; Design Engineer</h2>
+      <h2>Product Designer &amp; Design Engineer</h2>
       <p>Crafting scalable design systems, fintech platforms and interactive interfaces for tech leaders.</p>
       <div class="chips"><span>8+ yrs</span><span>SF / Remote</span><span>Available</span></div>
     </div>
@@ -161,14 +194,22 @@ a.th{display:block}
     <input type="radio" name="t" id="r2">
     <input type="radio" name="t" id="r3">
     <input type="radio" name="t" id="r4">
+    <input type="radio" name="v" id="v1" checked>
+    <input type="radio" name="v" id="v2">
+    <input type="radio" name="v" id="v3">
+    <input type="radio" name="v" id="v4">
 
     <div class="bar"><a href="#" title="Close"></a>
       <span>
         <span class="t t1"><b>Web Designs</b><small><em class="cnt" data-c="web">0</em> items · Updated live</small></span>
         <span class="t t2"><b>Credentials</b><small><em class="cnt" data-c="credentials">0</em> items · Verified documents</small></span>
-        <span class="t t3"><b>Data Analysis</b><small><em class="cnt" data-c="data">0</em> items · Work in progress</small></span>
+        <!-- <span class="t t3"><b>Data Analysis</b><small><em class="cnt" data-c="data">0</em> items · Work in progress</small></span> -->
         <span class="t t4"><b>Blogs</b><small><em class="cnt" data-c="blogs">0</em> items · Articles &amp; essays</small></span>
       </span>
+    </div>
+
+    <div class="tool"><span>View</span>
+      <div class="seg"><label for="v1" class="m1">Large</label><label for="v2" class="m2">Medium</label><label for="v3" class="m3">List</label><label for="v4" class="m4">Details</label></div>
     </div>
 
     <div class="body">
@@ -178,15 +219,15 @@ a.th{display:block}
           <nav class="tabs">
             <label for="r1" class="l1">Web Designs <em class="cnt" data-c="web">0</em></label>
             <label for="r2" class="l2">Credentials <em class="cnt" data-c="credentials">0</em></label>
-            <label for="r3" class="l3">Data Analysis <em class="cnt" data-c="data">0</em></label>
+            <!-- <label for="r3" class="l3">Data Analysis <em class="cnt" data-c="data">0</em></label> -->
             <label for="r4" class="l4">Blogs <em class="cnt" data-c="blogs">0</em></label>
           </nav>
         </div>
 
         <div class="me">
-          <div class="av">FJ</div>
+          <div class="av">374N</div>
           <h3>Festus Obalolu Joshua</h3>
-          <h4>Staff Product Designer &amp; Design Engineer</h4>
+          <h4>Product Designer &amp; Design Engineer</h4>
           <p>Crafting scalable design systems, fintech platforms and interactive interfaces for tech leaders.</p>
           <div class="soc">
             <a href="https://www.linkedin.com/in/your-handle" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn"><svg><use href="#in"/></svg></a>
@@ -209,10 +250,10 @@ a.th{display:block}
 
     <div class="status">
       <span>
-        <span class="s s1">Macintosh HD › Portfolio › Web Designs</span>
-        <span class="s s2">Macintosh HD › Portfolio › Credentials</span>
-        <span class="s s3">Macintosh HD › Portfolio › Data Analysis</span>
-        <span class="s s4">Macintosh HD › Portfolio › Blogs</span>
+        <span class="s s1">374N › Portfolio › Web Designs</span>
+        <span class="s s2">374N › Portfolio › Credentials</span>
+        <span class="s s3">374N › Portfolio › Data Analysis</span>
+        <span class="s s4">374N › Portfolio › Blogs</span>
       </span>
       <span>
         <span class="s s1"><em class="cnt" data-c="web">0</em> items · Click to read the case study</span>
@@ -236,6 +277,9 @@ a.th{display:block}
     blogs:{id:'blogs',pill:'Read \u2197',none:'No articles yet.'}
   };
   function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x)e.textContent=x;return e}
+  var KIND={web:'Website',credentials:'Document',data:'Analysis',blogs:'Article'};
+  function yr(s){return s.year||(s.created_at||'').slice(0,4)}
+  function hd(){var h=el('div','hd');['Name','Description','Year','Kind'].forEach(function(x){h.appendChild(el('span','',x))});return h}
   function docCard(s){
     var d=el('div','item'),u=/^https?:\/\//i.test(s.file_url||'')?s.file_url:'#',n=s.file_name||s.name;
     var th=el('a','th');th.href=u;th.target='_blank';th.rel='noopener';
@@ -243,7 +287,7 @@ a.th{display:block}
     else th.appendChild(el('div','doc',(n.split('.').pop()||'FILE').toUpperCase().slice(0,4)));
     th.appendChild(el('i','','View \u2197'));
     d.appendChild(th);d.appendChild(el('b','',s.name));
-    if(s.purpose)d.appendChild(el('p','',s.purpose));
+    d.dataset.img=s.image_url||'';d.appendChild(el('p','',s.purpose||''));d.appendChild(el('small','d',yr(s)));d.appendChild(el('small','k','Document'));
     var ac=el('div','acts'),v=el('a','','View'),dl=el('a','','Download');
     v.href=u;v.target='_blank';v.rel='noopener';dl.href=u+(u.indexOf('?')>-1?'&':'?')+'download='+encodeURIComponent(n);
     ac.appendChild(v);ac.appendChild(dl);d.appendChild(ac);return d}
@@ -253,13 +297,14 @@ a.th{display:block}
     document.querySelectorAll('.cnt[data-c="'+k+'"]').forEach(function(e){
       e.textContent=(k==='data'&&!rows.length&&e.closest('label'))?'WIP':rows.length});
     if(!rows.length){box.appendChild(k==='data'?el('div','wip',c.none):el('div','note',c.none));return}
+    box.appendChild(hd());
     rows.forEach(function(s){
       if(k==='credentials'){box.appendChild(docCard(s));return}
       var a=el('a','item');if(k==='web'){a.href='case.html?id='+encodeURIComponent(s.id)}else{a.href=/^https?:\/\//i.test(s.link)?s.link:'#';a.target='_blank';a.rel='noopener'}
       var th=el('div','th');
       if(s.image_url){var im=new Image();im.loading='lazy';im.alt='';im.src=s.image_url;im.onerror=function(){im.remove()};th.appendChild(im)}
-      th.appendChild(el('i','',c.pill));a.appendChild(th);a.appendChild(el('b','',s.name));
-      if(s.purpose)a.appendChild(el('p','',s.purpose));
+      a.dataset.img=s.image_url||'';th.appendChild(el('i','',c.pill));a.appendChild(th);a.appendChild(el('b','',s.name));
+      a.appendChild(el('p','',s.purpose||''));a.appendChild(el('small','d',yr(s)));a.appendChild(el('small','k',KIND[k]));
       box.appendChild(a);
     });
   }
@@ -270,6 +315,16 @@ a.th{display:block}
   function load(){sb.from('sites').select('*').order('created_at',{ascending:true}).then(function(r){r.error?fail('Could not load content.'):render(r.data||[])})}
   load();
   sb.channel('sites-live').on('postgres_changes',{event:'*',schema:'public',table:'sites'},load).subscribe();
+})();
+</script>
+<script>
+(function(){
+  var pv=document.getElementById('pv'),pi=pv.firstChild,main=document.querySelector('.main');
+  function lst(){return document.getElementById('v3').checked||document.getElementById('v4').checked}
+  main.addEventListener('mouseover',function(e){var it=e.target.closest('.item');if(!it||!lst()||!it.dataset.img)return;pi.src=it.dataset.img;pv.classList.add('on')});
+  main.addEventListener('mouseout',function(e){var it=e.target.closest('.item');if(it&&!it.contains(e.relatedTarget))pv.classList.remove('on')});
+  main.addEventListener('mousemove',function(e){var w=270,h=170,x=e.clientX+24,y=e.clientY+24;if(x+w>innerWidth-10)x=e.clientX-w-24;if(y+h>innerHeight-10)y=e.clientY-h-24;pv.style.transform='translate('+x+'px,'+y+'px)'});
+  document.querySelectorAll('input[name=v],input[name=t]').forEach(function(i){i.addEventListener('change',function(){pv.classList.remove('on')})});
 })();
 </script>
 <script>try{var t=document.getElementById('theme');if(localStorage.getItem('theme')==='dark')t.checked=true;t.onchange=function(){localStorage.setItem('theme',t.checked?'dark':'light')}}catch(e){}</script>
